@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- logback配置
+    1. 生产环境禁止输出日志到控制台
+       注释 <appender-ref ref="STDOUT" /> 即可
+    2. 配置包日志
+       配置logger标签即可，name字段为包全路径，lever可控制日志等级
+    3. 生产环境下不停机更新日志配置
+       scanPeriod：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效
+-->
+<configuration scan="true" scanPeriod="60000">
+
+    <!-- Basic log dir, name config -->
+    <property name="baseDir" value="D:/logs/JavaDemo"/>
+    <property name="demoClassDir" value="demoClass"/>
+
+    <!-- DemoClass log -->
+    <appender name="DEMO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${baseDir}/${demoClassDir}.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss z} [%thread] %-5level %logger{5} %M:%L - %msg%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${baseDir}/${demoClassDir}/%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!--只保留最近90天的日志-->
+            <!--            <maxHistory>90</maxHistory>-->
+            <!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志-->
+            <!--            <totalSizeCap>1GB</totalSizeCap>-->
+        </rollingPolicy>
+    </appender>
+
+    <!-- 控制台输出 不需要修改 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss z} [%thread] %-5level %logger{5} %M:%L - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.spz.demo.java" level="INFO" additivity="true">
+        <appender-ref ref="DEMO" />
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
